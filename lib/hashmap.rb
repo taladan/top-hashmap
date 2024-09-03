@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # lib/hashmap.rb
-class hashmap
+class Hashmap
   def initialize
     @unused
   end
@@ -54,5 +54,4 @@ class hashmap
   def entries
     # entries logic
   end
-  
 end
