@@ -3,11 +3,19 @@
 # lib/hashmap.rb
 class Hashmap
   def initialize
-    @unused
+    @capacity = 16
+    @load_factor = 0.789
+    @buckets = []
   end
 
+  # return a numeric hash of `key`
   def hash(key)
-    # hash logic
+    hash_code = 0
+    prime_number = 31
+
+    key.each_char { |char| hash_code = (prime_number * hash_code) + char.ord }
+
+    hash_code
   end
 
   # set value to key
@@ -17,27 +25,36 @@ class Hashmap
 
   # return value for key
   def get(key)
+    raise KeyError if @buckets.empty?
+
     # get logic
+    container = @buckets.each { |bucket| return bucket if bucket.label == hash(key) }
+    container.contents.at(container.contents.find(key))
   end
 
   # boolean if has key in hashmap
   def has?(key)
+    false if @buckets.empty?
+    hash(key)
     # has? logic
   end
 
   # remove key from hash and return deleted entry's value
   def remove(key)
+    false if @buckets.empty?
     # remove logic
+    hash(key)
   end
 
   # return the number of keys stored in the hashmap
   def length
-    # length logic
+    @buckets.length
   end
 
   # remove all entries in hashmap
   def clear
-    # clear logic
+    # Need to check to see if this will cause linked list in old buckets to remain in memory
+    @buckets = nil
   end
 
   # return array of all keys in hashmap
