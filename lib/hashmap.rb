@@ -41,7 +41,8 @@ class Hashmap
 
   # remove key from hash and return deleted entry's value
   def remove(key)
-    false if @buckets.empty?
+    raise KeyError if @buckets.empty?
+
     # remove logic
     hash(key)
   end
