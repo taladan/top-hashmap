@@ -1,26 +1,27 @@
 # frozen_string_literal: true
 
+require_relative 'bucket'
+require_relative 'hasher'
+
 # lib/hashmap.rb
 class Hashmap
+  attr_reader :buckets
+
   def initialize
     @capacity = 16
     @load_factor = 0.789
-    @buckets = []
-  end
-
-  # return a numeric hash of `key`
-  def hash(key)
-    hash_code = 0
-    prime_number = 31
-
-    key.each_char { |char| hash_code = (prime_number * hash_code) + char.ord }
-
-    hash_code
+    @buckets = Array.new(@capacity)
+    @hasher = Hasher.new
   end
 
   # set value to key
   def set(key, value)
-    # set logic
+    grow if @buckets.length == @capacity * @load_factor
+    hsh = @hasher.make_hash(key)
+    index = index_from_hash(hsh)
+
+    # this feels kludgy
+    @buckets[index].nil? ? new_bucket(hsh, index, key, value) : @buckets[index].contents.append(key, value)
   end
 
   # return value for key
@@ -28,23 +29,26 @@ class Hashmap
     raise KeyError if @buckets.empty?
 
     # get logic
-    container = @buckets.each { |bucket| return bucket if bucket.label == hash(key) }
-    container.contents.at(container.contents.find(key))
+    @buckets.each { |bucket| return bucket if bucket.id == @hasher.make_hash(key).hash }
+    # container.contents.at(container.contents.find(key)) || raise KeyError
   end
 
   # boolean if has key in hashmap
   def has?(key)
     false if @buckets.empty?
-    hash(key)
-    # has? logic
+    @hasher.make_hash(key)
+    @buckets.each do |bucket|
+      next if bucket.nil?
+      return true if bucket.contents.include_key?(key)
+    end
+    false
   end
 
   # remove key from hash and return deleted entry's value
-  def remove(key)
+  def remove(_key)
     raise KeyError if @buckets.empty?
 
     # remove logic
-    hash(key)
   end
 
   # return the number of keys stored in the hashmap
@@ -72,4 +76,30 @@ class Hashmap
   def entries
     # entries logic
   end
+
+  private
+
+  # increase the capacity of the hashmap
+  def grow
+    # expand capacity
+    @capacity *= 2
+
+    # initiate new empty array
+    new_buckets_array = Array.new(@capacity)
+
+    # rehash keys and reindex to new capacity
+
+    # final step assign array to instance var
+    @buckets = new_buckets_array
+  end
+
+  # use hash mod capacity to get index number
+  def index_from_hash(hsh)
+    hsh % @capacity
+  end
+end
+
+def new_bucket(hsh, index, key, value)
+  @buckets[index] = Bucket.new(hsh)
+  @buckets[index].contents.append(key, value)
 end
