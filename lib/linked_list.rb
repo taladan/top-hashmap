@@ -11,30 +11,32 @@ class LinkedList
   end
 
   # add item to end of list
-  def append(data)
-    empty? ? set_head(data) : set_tail(data)
+  def append(key, value)
+    # need to check if key is already included in LL, if so, overwrite value
+    if include_key?(key)
+
+      pos = find_key(key)
+      remove_at(pos)
+      pos == 0 ? set_head(key, value) : insert_at(key, value, pos)
+      return at(pos)
+    end
+
+    # otherwise check if list is empty, if so add k/v to head of list, if not, add to tail of list
+    empty? ? set_head(key, value) : set_tail(key, value)
   end
 
   # add item to head of list
-  def prepend(data)
-    node = new_node(data)
+  def prepend(key, value)
+    node = new_node(key, value)
     node.next_node = @head
     self.head = node
   end
 
   # return number of items in list
-  def size
+  def length
     return 0 if empty?
 
     count_node(@head, 1)
-  end
-
-  def count
-    size
-  end
-
-  def length
-    size
   end
 
   # return last item of list
@@ -44,6 +46,7 @@ class LinkedList
 
   # return item at `list[p]` position
   def at(position, node = @head, counter = 0)
+    return nil if position > length
     return node if counter == position
 
     at(position, node.next_node, counter + 1)
@@ -56,66 +59,67 @@ class LinkedList
       @head = nil
       return node
     end
-    new_tail = at(count - 2, @head)
+    new_tail = at(length - 2, @head)
     old_tail = new_tail.next_node
     new_tail.clear!
     old_tail
   end
 
-  # boolean if list includes item
-  def include?(data)
-    has_data(data, @head)
+  # boolean if list includes key
+  def include_key?(key, node = @head)
+    return false if empty?
+    return true if node.key == key
+    return false if node.tail?
+
+    include_key?(key, node.next_node)
   end
 
-  # locate position of item in list
-  def find(value, node = @head, count = 0)
-    return count if value == node.data
+  # boolean if list includes valeu
+  def include_value?(value, node = @head)
+    return true if node.value == value
+    return false if node.tail?
+
+    include_value?(value, node.next_node)
+  end
+
+  # locate position of key in list
+  def find_key(key, node = @head, count = 0)
+    return count if key == node.key
     return nil if node.tail?
 
     node = node.next_node
-    find(value, node, count + 1)
+    find_key(key, node, count + 1)
   end
 
-  # returns string representation of list
-  def to_s(start = 0, terminal = nil)
-    return nil if empty?
+  # locate first position of value in list
+  def find_value(value, node = @head, count = 0)
+    return count if value == node.value
+    return nil if node.tail?
 
-    node = at(start)
-    stringify_node(node.next_node, sentence_starter(node.data), start, terminal, start + 1)
+    node = node.next_node
+    find_value(value, node, count + 1)
   end
 
   # insert item at position
-  def insert_at(data, position)
-    node = new_node(data)
+  def insert_at(key, value, position)
+    node = Node.new(key, value)
     old_node = at(position)
-    previous_node = at(position - 1)
+    previous_node = at(position - 1) unless position == 0
     node.next_node = old_node
-    previous_node.next_node = node
+    previous_node.next_node = node unless position == 0
     node
   end
 
   # remove item by position
   def remove_at(position)
     node = at(position)
-    previous_node = at(position - 1)
-    previous_node.next_node = node.next_node
+    previous_node = at(position - 1) unless position == 0
+    previous_node.next_node = node.next_node unless position == 0
     node.clear!
     node
   end
 
   private
-
-  # recursively convert items in list to string
-  def stringify_node(node, sentence, start, terminal, counter = 1)
-    return concat(sentence, node, terminal) if node.tail? || terminal == counter - start + 1
-
-    # This is a bit hackey.  Sending nil to concat so that it won't mis-build the list.
-    stringify_node(node.next_node, concat(sentence, node, nil), start, terminal, counter + 1)
-  end
-
-  def sentence_starter(data)
-    "( #{data} ) -> "
-  end
 
   # recursively count nodes
   def count_node(node, counter)
@@ -131,33 +135,15 @@ class LinkedList
     last_node(node.next_node)
   end
 
-  def new_node(data)
-    Node.new(data)
+  def set_head(key, value)
+    self.head = Node.new(key, value)
   end
 
-  def set_head(data)
-    self.head = new_node(data)
-  end
-
-  def set_tail(data)
-    last_node(@head).next_node = new_node(data)
+  def set_tail(key, value)
+    last_node(@head).next_node = Node.new(key, value)
   end
 
   def empty?
     @head.nil?
-  end
-
-  def concat(sentence, node, terminal)
-    return sentence + "( #{node.data} ) -> nil" if node.tail?
-    return sentence + "( #{node.data} )" unless terminal.nil?
-
-    sentence + "( #{node.data} ) ->"
-  end
-
-  def has_data(value, node = @head)
-    return true if node.data == value
-    return false if node.tail?
-
-    has_data(value, node.next_node)
   end
 end
