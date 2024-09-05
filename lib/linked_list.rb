@@ -16,8 +16,7 @@ class LinkedList
     if include_key?(key)
 
       pos = find_key(key)
-      remove_at(pos)
-      pos == 0 ? set_head(key, value) : insert_at(key, value, pos)
+      at(pos).overwrite(value)
       return at(pos)
     end
 
