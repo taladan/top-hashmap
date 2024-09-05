@@ -35,7 +35,8 @@ class Hashmap
 
   # boolean if has key in hashmap
   def has?(key)
-    false if @buckets.empty?
+    return false if @buckets.empty?
+
     @hasher.make_hash(key)
     @buckets.each do |bucket|
       next if bucket.nil?
