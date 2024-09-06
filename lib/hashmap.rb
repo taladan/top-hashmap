@@ -50,6 +50,7 @@ class Hashmap
   # return value for key
   def get(key)
     raise KeyError if @buckets.empty?
+    return nil unless has?(key)
 
     index = index_from_hash(@hasher.make_hash(key))
     position = @buckets[index].contents.find_key(key)
@@ -57,10 +58,12 @@ class Hashmap
   end
 
   # remove key from hash and return deleted entry's value
-  def remove(_key)
+  def remove(key)
     raise KeyError if @buckets.empty?
 
-    # remove logic
+    index = index_from_hash(@hasher.make_hash(key))
+    position = @buckets[index].contents.find_key(key)
+    @buckets[index].contents.remove_at(position)
   end
 
   # remove all entries in hashmap
@@ -71,16 +74,19 @@ class Hashmap
 
   # return array of all keys in hashmap
   def keys
+    raise KeyError if @buckets.empty?
     # keys logic
   end
 
   # return array of all values in hashmap
   def values
+    raise KeyError if @buckets.empty?
     # values logic
   end
 
   # return array containing each key/value pair [[first_key, first_value], [second_key, second_value]...]
   def entries
+    raise KeyError if @buckets.empty?
     # entries logic
   end
 
