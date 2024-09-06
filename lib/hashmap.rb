@@ -66,13 +66,6 @@ class Hashmap
     @buckets[index].contents.remove_at(position)
   end
 
-  # remove all entries in hashmap
-  # unfinished
-  def clear
-    # Need to check to see if this will cause linked list in old buckets to remain in memory
-    @buckets = nil
-  end
-
   # return array of all keys in hashmap
   def keys
     raise KeyError if @buckets.empty?
@@ -82,13 +75,12 @@ class Hashmap
     @buckets.each do |bucket|
       next if bucket.nil?
 
-      output << bucket.keys
+      output.concat(bucket.keys)
     end
-    output.flatten
+    output
   end
 
   # return array of all values in hashmap
-  # unfinished
   def values
     raise KeyError if @buckets.empty?
 
@@ -96,16 +88,30 @@ class Hashmap
     @buckets.each do |bucket|
       next if bucket.nil?
 
-      output << bucket.values
+      output.concat(bucket.values)
     end
-    output.flatten
+    output
   end
 
   # return array containing each key/value pair [[first_key, first_value], [second_key, second_value]...]
   # unfinished
   def entries
     raise KeyError if @buckets.empty?
-    # entries logic
+
+    output = []
+    @buckets.each do |bucket|
+      next if bucket.nil?
+
+      output.concat(bucket.keys_and_values)
+    end
+    output
+  end
+
+  # remove all entries in hashmap
+  # unfinished
+  def clear
+    # Need to check to see if this will cause linked list in old buckets to remain in memory
+    @buckets = nil
   end
 
   private

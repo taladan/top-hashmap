@@ -32,4 +32,12 @@ class Bucket
     current_node = current_node.next_node
     values(current_node, arr)
   end
+
+  def keys_and_values(current_node = @contents.head, arr = [])
+    arr << [current_node.key, current_node.value]
+    return arr if current_node.next_node.nil?
+
+    current_node = current_node.next_node
+    keys_and_values(current_node, arr)
+  end
 end
