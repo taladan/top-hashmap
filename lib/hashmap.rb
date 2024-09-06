@@ -94,7 +94,6 @@ class Hashmap
   end
 
   # return array containing each key/value pair [[first_key, first_value], [second_key, second_value]...]
-  # unfinished
   def entries
     raise KeyError if @buckets.empty?
 
