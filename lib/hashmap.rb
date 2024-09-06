@@ -74,21 +74,31 @@ class Hashmap
   end
 
   # return array of all keys in hashmap
-  # unfinished
   def keys
     raise KeyError if @buckets.empty?
 
+    output = []
     # need to figure out this logic
     @buckets.each do |bucket|
       next if bucket.nil?
+
+      output << bucket.keys
     end
+    output.flatten
   end
 
   # return array of all values in hashmap
   # unfinished
   def values
     raise KeyError if @buckets.empty?
-    # values logic
+
+    output = []
+    @buckets.each do |bucket|
+      next if bucket.nil?
+
+      output << bucket.values
+    end
+    output.flatten
   end
 
   # return array containing each key/value pair [[first_key, first_value], [second_key, second_value]...]
