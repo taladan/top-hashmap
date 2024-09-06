@@ -67,24 +67,32 @@ class Hashmap
   end
 
   # remove all entries in hashmap
+  # unfinished
   def clear
     # Need to check to see if this will cause linked list in old buckets to remain in memory
     @buckets = nil
   end
 
   # return array of all keys in hashmap
+  # unfinished
   def keys
     raise KeyError if @buckets.empty?
-    # keys logic
+
+    # need to figure out this logic
+    @buckets.each do |bucket|
+      next if bucket.nil?
+    end
   end
 
   # return array of all values in hashmap
+  # unfinished
   def values
     raise KeyError if @buckets.empty?
     # values logic
   end
 
   # return array containing each key/value pair [[first_key, first_value], [second_key, second_value]...]
+  # unfinished
   def entries
     raise KeyError if @buckets.empty?
     # entries logic
@@ -93,6 +101,7 @@ class Hashmap
   private
 
   # increase the capacity of the hashmap
+  # unfinished
   def grow
     # expand capacity
     @capacity *= 2
@@ -110,9 +119,9 @@ class Hashmap
   def index_from_hash(hsh)
     hsh % @capacity
   end
-end
 
-def new_bucket(hsh, index, key, value)
-  @buckets[index] = Bucket.new(hsh)
-  @buckets[index].contents.append(key, value)
+  def new_bucket(hsh, index, key, value)
+    @buckets[index] = Bucket.new(hsh)
+    @buckets[index].contents.append(key, value)
+  end
 end
