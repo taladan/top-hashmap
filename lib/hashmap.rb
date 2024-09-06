@@ -51,9 +51,9 @@ class Hashmap
   def get(key)
     raise KeyError if @buckets.empty?
 
-    # get logic
-    @buckets.each { |bucket| return bucket if bucket.id == @hasher.make_hash(key).hash }
-    # container.contents.at(container.contents.find(key)) || raise KeyError
+    index = index_from_hash(@hasher.make_hash(key))
+    position = @buckets[index].contents.find_key(key)
+    @buckets[index].contents.at(position).value
   end
 
   # remove key from hash and return deleted entry's value
