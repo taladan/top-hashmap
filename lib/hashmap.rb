@@ -24,15 +24,6 @@ class Hashmap
     @buckets[index].nil? ? new_bucket(hsh, index, key, value) : @buckets[index].contents.append(key, value)
   end
 
-  # return value for key
-  def get(key)
-    raise KeyError if @buckets.empty?
-
-    # get logic
-    @buckets.each { |bucket| return bucket if bucket.id == @hasher.make_hash(key).hash }
-    # container.contents.at(container.contents.find(key)) || raise KeyError
-  end
-
   # boolean if has key in hashmap
   def has?(key)
     return false if @buckets.empty?
@@ -45,16 +36,31 @@ class Hashmap
     false
   end
 
+  # return the number of keys stored in the hashmap
+  def length
+    len = 0
+    @buckets.each do |bucket|
+      next if bucket.nil?
+
+      len += bucket.contents.length
+    end
+    len
+  end
+
+  # return value for key
+  def get(key)
+    raise KeyError if @buckets.empty?
+
+    # get logic
+    @buckets.each { |bucket| return bucket if bucket.id == @hasher.make_hash(key).hash }
+    # container.contents.at(container.contents.find(key)) || raise KeyError
+  end
+
   # remove key from hash and return deleted entry's value
   def remove(_key)
     raise KeyError if @buckets.empty?
 
     # remove logic
-  end
-
-  # return the number of keys stored in the hashmap
-  def length
-    @buckets.length
   end
 
   # remove all entries in hashmap
